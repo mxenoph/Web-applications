@@ -278,3 +278,101 @@ $some_condition =true;
         ?>
 </body>
 ```
+# JavaScript vol.2
+
+* concatenation operator is `+`
+* `var myarray = new Array(4);`
+
+## Document Object Model (DOM)
+
+* not part of JavaScript *per se* but an API built into the browser
+* objects organised into tree-like structure e.g. `window.document.logo_image`.
+  Each node in this tree has properties and methods and can be accessed in
+  JavaScript.
+
+### Browser object hierarchy
+
+```
+window
+|
+|______ document
+|       |    document.title // as set in <title>
+|       |    document.URL
+|       |    document.referrer // URL of page viewed before current one
+|       |    document.images // returns a list of images used in the doc
+|       |    document.cookie // read or set a cookie within the doc
+|       |    document.write, document.writeln // print text as part of the HTML
+|       |
+|        _____ links
+|       |           document.links.length // returns the number of links on page
+|        _____ anchors
+|       |           document.anchors.length
+|______ location // holds info on currently loaded URL with window.location.href
+|            location.protocol, *.hostname, *.port
+|            location.pathname // filename path of URL e.g. search in
+|                              // somehost/search?q=javascript
+|            location.search // query portion e.g. q=javascript
+|            location.assign() // load a new doc, takes a URL as argument
+|            location.reload() // reload the current doc
+|______ history // holds URL data & includes methods to go to previous or next locations
+|            history.go() // e.g. history.go(-2) is equivalent to clicking the
+back button twice
+|            history.back() // same as history.go(-1)
+|            history.forward() // same as history.go(1) if available
+|______ navigator
+|
+
+|
+```
+### Basic Node Properties
+
+* `nodeName`
+* `nodeType` is an integer describing the nodes type:
+    * HTML tags = 1
+    * text nodes =3
+    * document node = 9
+* `nodeValue` returns NULL for all nodes except the text node, for which it holds
+  the actual text
+* `innerHTML` and `innerText` hold the HTML and text content of any node
+  respectively
+
+### Basic Node Methods
+
+* `parentNode` is the primary node of an element
+* `firstChild`, `lastChild`, `childNodes`, `previousSibling`, `nextSibling`
+* `appendChild(new)`, `insertBefore(new, existing)`, `cloneNode(x)`
+* `replaceChild(new, existing)`, `removeChild(node)`
+* `hasChildNodes()`, returns boolean value
+
+### Document Methods
+
+* `getElementById(id)`, 
+* `getElementByTagName(tag)`, returns an array of all elements with a specified
+  tag
+* `createTextNode(text)`, creates new node with the specified text. It needs to
+  be added to the document after creation.
+* `createElementTag(tag)`
+
+*Nota bene*: `?` and `:` characters create *conditional expressions*, i.e. they
+are a shorthand way of handling `if` conditions
+
+## Defining an Object
+
+```
+// this is a constructor function for defining an object that holds 
+// business card information
+function Class(name, email, address, phone){
+    // `this` is used to refer to the current object -- the one being 
+    // created by the function
+    this.name = name;
+    this.email = email;
+    this.address = address;
+    this.phone = phone;
+    }
+```
+
+## Defining an Object Method
+
+```
+
+```
