@@ -394,7 +394,7 @@ objects with `prototype`  e.g. `String.prototype.heading = someFunction;`
 *Nota Bene*: the conditional operator `===` checks if the values are equal in
 both value and type.
 
-## Event handling
+# Event handling
 
 * actions/functions invoked for `onclick`, `onmousedown`, `onmouseup` etc
 * In Chrome, Safari, Firefox, events are automatically passed to the event
@@ -402,7 +402,7 @@ both value and type.
 * Event properties differ between web browsers, always add a line checking if
   event is present `if (!e) e = window.event;`
 
-## JQuery
+# JQuery
 
 * it is a JavanScript library
 * it can be loaded from a local machine or from a content delivery network such
@@ -427,7 +427,7 @@ both value and type.
   to elements or collection of elements e.g. `$("a").click(function(){//execute
   this code when any anchor element is clicked});`
 
-## AJAX: remote scripting
+# AJAX: remote scripting
 
 * a browser feature that enables JavaScript to work with files on a web-server. 
 * it is basically JavaScript's ability to use the built-in object
@@ -439,7 +439,7 @@ both value and type.
   provided as an AJAX library (\*.js) that is referenced in the pages as any
   external script.
 
-### How an AJAX request works
+## How an AJAX request works
 
 1.  script creates an `XMLHttpRequest` object and sends it to the web server.
 Since it is an **Asynchronous** JavaScript it can continue performing other
@@ -450,7 +450,7 @@ data
 4.  script displays the data from the server usually using the DOM, hence the
 page does not need to refresh.
 
-### XML
+## XML
 
 * a markup language designed to store and transport data
 * not so commonly used any more since it is easier to transfer data in JSON
@@ -472,5 +472,132 @@ ajaxreq.onreadystatechange = MyCustomFunc;
 // if the POST method is used instead then the argument to send() is the data
 ajaxreq.send(null);
 ```
+# PHP vol.2
+
+## Superglobal variables
+
+* These variables are always present and are actually an array of other variables
+* `$_GET` and `$_POST` contain any variable provided to a script through the `GET` and `POST` method respectively
+* `$_REQUEST` contains any variables provided to the script by any input method
+* `$_COOKIE` contains any vars provided to a script through a cookie
+* `$_FILES` contains any vars provided to a script through file uploads
+* `$_SERVER` contains info such as headers, file paths and script locations
+* `$_ENV` contains any vars provided to the script as part of the server ENV
+* `$_SESSION` contains any vars that are currently registered in a session
+
+
+> PHP *resource* data type is often returned by functions that will deal with external applications or files.
+
+> When you print a boolean in PHP, `true` is represented as 1 and `false` as an empty string.
+
+Functions of the format `is_*`,  where `*` $\in$ (bool, int, string, double, array, numeric, resource) test the validity of a particular type of variable.
+
+```
+// Change the data type of the variable to bool
+settype($variable, 'boolean')
+// Casting: makes a copy of the $variable but with a different type
+$new =  (boolean) $variable
+// Assigns foo to name and also prints foo since the assignment operator 
+// always resolves to a copy of the value of the right operand
+echo $name = 'foo';
+```
+## Operators
+1. *The concatenation operator in PHP is the single period unlike JavaScript that it is the plus symbol.*
+2. Each arithmetic operator as well as the concatenation operator, has a corresponding combination assignment operator e.g. `x += 4`
+
+## Comparison and logical operators
+
+```
+== //: equivalence
+!= //: non equivalence
+=== //: identical (equal and of the same type)
+!== //: non identical
+>
+<
+>=
+<=
+or // \\ can be used too
+xor // left or right is true but not both
+and // && can be used too
+```
+
+## PHP Constants
+
+* Unlike variables constants remain unchanged throughout a script
+* Constants are defined by `define("SOME_NAME", $some_value)` and by convention they are given capitalized letters.
+* They can be accesed just by their name without the use of the `$` sign.
+* Constants can be used anywhere in the scripts including functions stored in external files.
+* `__FILE__` and `__LINE__` are two of the PHP predefined constants that return the file and line the PHP engine is currently reading.
+
+## Arrays and associated functions
+
+* Arrays are defined as `array()` or `[]`
+* PHP allows associative arrays (i.e. dictionaries) e.g. `array("name" => Maria)`
+* Multidimensional arrays are just arrays of arrays and elements can be accessed e.g. `$array[1]['name']`
+* Useful array=-associated functions: `count()`, `sizeof()`, `each()` and `list()` for stepping through an array, `array_push()`, `array_pop()`, `array_shift()`, `array_unshift()`, `array_keys()`, `array_values()`, `array_merge()`
+
+*Nota bene:*
+
+1. To access global variables within the scope of a function one has to place the `global` statement in front of the variable when it is declared in the function e.g. `function foo(){global $name; echo $"foo will print here: ". $name}`.
+2. The static statement can be used to save states between function calls i.e. the function will remember a counter and increment it every time it is called. `function foo(){static $num_of_calls=0; $$num_of_calls++; echo "Called ".$num_of_calls."times"}`
+3. Variables can be passed by reference to a function e.g. `function foo(&x){$x++}` will increment variable `$x` globally.
+
+## PHP classes
+
+* It is standard pracrise to declare the variables at the top of a class. Variables can be declared as `public`, `protected` or `private`, e.g. `public $x;`, so they can be accessed everywhere, within the class and its partent or inherident, or **only** by the class itself, respectively.
+* `public` or `protected` variables/properties can be accessed via `$foo_object -> x`
+* A constructor is a function that lives within a class, shares the same name as the class and is automatically called when an instance (*object*) of the class is created. Constructors enable me to provide arguments to a class.
+
+*Nota bene:* the ternary operator `?:` is similar to the `if` statement except that it returns a value derived from one of two expressions separated by a colon
+
+# Database design process
+
+## Design considerations / database normalisation
+
+1. ease of maintenance
+2. minimizing duplications
+3. avoiding inconsistencies
+
+*Nota bene:* primary key (PK) is the key that uniquely defines the record in the table
+
+## Relationships
+
+* one-to-one: a key appears only once in a related table.
+* one-to-many: keys from one table appear multiple times in a related table, e.g. employees of the same department (department id appears multiple times)
+* many-to-many: the primary key from a table can appear to the related table many times and *vice versa* e.g. StudentIDs can appear for many ClassIDs and *vice versa*
+
+**Normalization is the art of organising your database in such a way that the tables relate to each other where appropriate and are flexible for future growth. There are 9 basic normalisations (i.e. normal forms)**
+
+### First normal form
+
+* Eliminate repeating information
+* Createn separate tables for related data
+
+### Second normal form
+
+* No non-key attributes depend on a portion of the primary key, *i.e.* remove, --give them their own universe-- fields not entirely related to the primary key
+
+### Third normal form
+
+* No attributes depend on other non-key attributes, *i.e.* checking if the fields can be broken down further and that are not dependent on the key
+
+## Steps in the design process
+
+* define the objective
+* design the data structures (tables and fields)
+* discern relationships
+* define and implement business rules
+* create the application
+
+# Basic SQL commands
+
+## Numeric data types
+|	signed/unsigned	    |	must be signed	|
+|	---	            |	---		|
+|	INTEGER (width < 11 digits)   |	FLOAT(M,D) (width < 24 digits)	|
+|	TINYINT	(width < 4 digits)    |	DOUBLE(M,D) (width < 53 digits)	|
+|	SMALLINT (width < 5 digits)   |		DECIMAL(M,D) 		|
+|	MEDIUMINT (width < 9 digits)  |					|
+|	BIGINT	(width < 20 digits)   |					|
 
 
