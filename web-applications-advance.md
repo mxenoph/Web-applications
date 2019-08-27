@@ -354,7 +354,8 @@ back button twice
 * `createElementTag(tag)`
 
 *Nota bene*: `?` and `:` characters create *conditional expressions*, i.e. they
-are a shorthand way of handling `if` conditions
+are a shorthand way of handling `if` conditions. e.g. `value = (a == 3) ? 1 : 0`
+sets `value` to `1` if condition is met.
 
 ## Defining an Object
 
@@ -368,11 +369,108 @@ function Class(name, email, address, phone){
     this.email = email;
     this.address = address;
     this.phone = phone;
+    this.printCard = printCard; // add printCard function as a method to this
+    object
     }
 ```
 
 ## Defining an Object Method
 
 ```
+function printCard(){
+    var name_line =  "Name: " + this.name + "<br/>\n";
+    var email_line =  "Email: " + this.email + "<br/>\n";
+    var address_line =  "Address: " + this.address + "<br/>\n";
+    var phone_line =  "Phone: " + this.phone + "<br/>\n";
+    document.write(name_line, email_line, address_line, phone_line);
+    }
+```
+
+* New objects are created with `var x = new Card("John Do", "jdo@jdo.com", "Some
+address", "22xxxxxx");`
+* Though not advised methods and properties can be added to JavaScript built-in
+objects with `prototype`  e.g. `String.prototype.heading = someFunction;`
+
+*Nota Bene*: the conditional operator `===` checks if the values are equal in
+both value and type.
+
+## Event handling
+
+* actions/functions invoked for `onclick`, `onmousedown`, `onmouseup` etc
+* In Chrome, Safari, Firefox, events are automatically passed to the event
+  handler function but in Internet Explorer it is stored in `window.event`
+* Event properties differ between web browsers, always add a line checking if
+  event is present `if (!e) e = window.event;`
+
+## JQuery
+
+* it is a JavanScript library
+* it can be loaded from a local machine or from a content delivery network such
+  as the one hosted by Google (the url for the `jquery.min.js` file can be
+  passed to the `src` parameter of the `<script>` tag). The latter is faster as
+  the user may have that file cached.
+* `$("#someElement")` to get an element that has an ID someElement
+* `$(".someClass")` to get the elements of class someClass
+* the `$().ready` handler ensures that nothing within the page has been
+  manipulated until a state of DOM readiness has been detected. Thus all primary
+  commands should be wrapped by this handler.
+
+  ```
+  $().ready(function() {
+      // Jquery code goes here
+  });
+  ```
+* JQuery's `show()`, `hide()`, `toggle()` can be applied to a collection of
+  elements and are easier to use than manipulating the value of the `display`
+  property of an element's style object.
+* JQuery has its own syntax for handling events; you can attach event handlers
+  to elements or collection of elements e.g. `$("a").click(function(){//execute
+  this code when any anchor element is clicked});`
+
+## AJAX: remote scripting
+
+* a browser feature that enables JavaScript to work with files on a web-server. 
+* it is basically JavaScript's ability to use the built-in object
+  `XMLHttpRequest`
+* JavaScript can send data to a server-side program using the `GET` and `POST`
+  methods. In a `GET` request the data is encoded in the URL that loads the
+  program , whereas in a `POST` request the data is sent separately.
+* Functions that handle making a request and receiving the result can be
+  provided as an AJAX library (\*.js) that is referenced in the pages as any
+  external script.
+
+### How an AJAX request works
+
+1.  script creates an `XMLHttpRequest` object and sends it to the web server.
+Since it is an **Asynchronous** JavaScript it can continue performing other
+tasks while waiting for a server response.
+2.  the server responds by sending the contents of a file/output of a program.
+3.  when the response arrives, a Javascript function is triggered to act on the
+data
+4.  script displays the data from the server usually using the DOM, hence the
+page does not need to refresh.
+
+### XML
+
+* a markup language designed to store and transport data
+* not so commonly used any more since it is easier to transfer data in JSON
+  format
+
+## Using XMLHttpRequest to communicate with a server
 
 ```
+var ajaxreq = new XMLHttpRequest();
+// send data from filename to the server with method GET
+// ajaxreq.open("GET", "filename");
+/* opens the search.php script stored on the server and sends the value John to
+it as the query parameter */
+ajaxreq.open("GET", "search.php?query=John");
+/* the XMLHttpRequest object has a property readyState with values 0-4
+(0 for a new request and 4 for complete) that can be accessed with the
+following handler and invoke MyCustomFunc once request is ready */
+ajaxreq.onreadystatechange = MyCustomFunc;
+// if the POST method is used instead then the argument to send() is the data
+ajaxreq.send(null);
+```
+
+
