@@ -592,6 +592,7 @@ and // && can be used too
 # Basic SQL commands
 
 ## Numeric data types
+
 |	signed/unsigned	    |	must be signed	|
 |	---	            |	---		|
 |	INTEGER (width < 11 digits)   |	FLOAT(M,D) (width < 24 digits)	|
@@ -599,5 +600,187 @@ and // && can be used too
 |	SMALLINT (width < 5 digits)   |		DECIMAL(M,D) 		|
 |	MEDIUMINT (width < 9 digits)  |					|
 |	BIGINT	(width < 20 digits)   |					|
+
+## String Types
+
+* **CHAR(M)** : fixed-length (M) string
+* **VARCHAR(M)** : variable-length (max M?) string
+* **BLOB or TEXT** : BLOBs are **B**inary **L**arge **O**bjects used to store binary data such as images or other types of files. Data stored in BLOBs are case sensitive whereas those in TEXT are not
+* **TINYBLOB or TINYTEXT** : 
+* **MEDIUMBLOB or MEDIUMTEXT**
+* **LONGBLOB or LONGTEXT**
+* **ENUM** : *enumeration, i.e.*  list of allowed values for that field
+
+## Table syntax
+
+`CREATE TABLE table_name (column_name column_type);`
+
+For example:
+
+```mysql
+CREATE TABLE grocery_inventory(
+	id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+	item_name VARCHAR(50) NOT NULL,
+	item_price FLOAT NOT NULL,
+	curr_qty INT NOT NULL
+);
+```
+
+###Adding new record to a table*
+
+`INSERT INTO table_name (column names) VALUES (column values);`
+
+For example:
+
+```
+INSERT INTO grocery_inventory (item_name, item_price, curr_qty)
+VALUES ('biscuits', 3.48, 129);
+// also valid
+INSERT INTO grocery_inventory VALUES (NULL, 'biscuits', 3.48, 129);
+```
+
+### Retrieving records from table
+
+```
+SELECT column_name1, column_name2 FROM table_name
+// equivalent to filter dplyr function
+[WHERE some_condition_is_true]
+// can provide a list of columns/fields to sort by
+[ORDER BY column_to_sort_on [ASC (default) | DESC]]
+/* equivalent to slice dplyr function that returns the
+specified number of rows starting at the offset */
+[LIMIT offset, rows]
+```
+
+For example:
+
+```
+SELECT * FROM grocery_inventory WHERE curr_qty = 500
+ORDER BY curr_qty LIMIT 0,2;
+
+SELECT * FROM grocery_inventory WHERE item_price BETWEEN 1.5 AN 3;
+```
+
+*Nota bene:* operators used with `WHERE` include `BETWEEN, AND, OR, IN, LIKE`. `LIKE` is used for pattern matching with wildcards `%` (matches multiple characters) and `_` (matches exactly one character). The comparison is not case sensitive unless the `BINARY` keyword is used.
+
+For example: `SELECT * FROM grocery_inventory WHERE item_name LIKE 'Bis%';`
+
+### Meging tables by some field
+
+Using `SELECT`:
+
+`SELECT fruit.id fruitname, colorname 
+FROM fruit, color WHERE fruit.id = color.id;`
+
+Using `JOIN`:
+
+`SELECT fruitname colorname FROM fruit INNER JOIN color on fruit.id = color.id;`
+
+*Nota bene:* `ON` clauses can be used with any conditions used for `WHERE`, including all the various logical and arithmetic operators. MyQSL also has a `LEFT JOIN` clause and much like dplyr it will keep all rows in the first table regardless if there are matches in the second table. Several other types of `JOIN` exist too.
+
+### Subqueries - Basic syntax
+
+`SELECT expressions_and_columns FROM table_name WHERE somecolumn = (SUBQUERY);`
+
+For example:
+
+```
+SELECT firstname, lastname FROM master_names
+WHERE name_id IN (SELECT name_id FROM email);
+```
+
+Subqueries can be used with `UPDATE`, `DELETE`, `SELECT`, `INSERT` statements 
+
+```
+UPDATE table_name 
+SET column1 = 'new value', 
+column2 = 'new_value2'
+[WHERE some_condition_is_true];
+```
+
+### Replace statement
+With `REPLACE` if the record to be inserted into the table contains a primary key value that matches a record already in the table, the old record is deleted and the new one is inserted in its place.
+
+`REPLACE INTO table_name (column list) VALUES (column values)`
+
+## MySQL common string functions
+
+* `CHAR_LENGTH`: count characters in a string
+* `CONCAT` and `CONCAT_WS`: concatenate without and with separator
+* `LOCATE`: finds substring start position in string
+* `SUBSTRING`, `LEFT`, `RIGHT`: substring functions 
+* `LTRIM`, `RTRIM`, `TRIM`: whitespace and other character trimming
+* `LPAD`, `RPAD`: add characters to string
+* `LCASE`, `UCASE`:  transform to lowercase and uppercase
+
+Examples:
+
+```
+SELECT CONCAT('Random', 'strings', 'together');
+SELECT CONCAT(firstname, lastname) FROM master_name;
+
+SELECT CONCAT_WS(' ', firstname, lastname) 
+AS fullname FROM master_name;
+```
+
+# MySQL through PHP
+
+## Making a connection 
+
+### With procedural programming
+
+`$mysqli =  mysqli_connect('hostname', 'username', 'password', 'database')`
+
+### With OOP
+
+`$mysqli =  new mysqli('hostname', 'username', 'password', 'database')`
+
+For example:
+
+`$mysqli =  new mysqli('localhost', 'mxenoph', 'passworrd', 'joomla')`
+
+*TODO:* check if my example here matches what I actually used
+
+To close a connection to MySQL:
+
+`$mysqli -> close()`
+
+# Checking for errors
+
+* With connection:
+
+```
+if ($mysqli-> connect_errno){
+	die('Connect error: '. $mysqli->connect_errno);
+}
+```
+
+* Errors returned when attempting a query: 
+
+```
+if(mysqli->query("CREATE TABLE foo (id INT NULL PRIMARY KEY AUTO_INCREMENT)") == TRUE){
+	echo "Table successfully created"
+} else {
+	printf("Houston we have a problem: %s\n", $mysqli->error);
+}
+```
+
+# Avoid SQL Injection
+
+* User input needs to be sanitized before being used in MySQL queries to avoid security breaches
+* Santize input from forms with 
+
+```
+$mysqli -> real_escape_string($_POST['field_of_form'])
+```
+
+The function `real_escape_string` requires that a connection to the database has already been made. 
+
+## Good practise
+
+`$res = mysqli->query("CREATE TABLE foo (id INT NULL PRIMARY KEY AUTO_INCREMENT)")`
+
+* Retrieving query results as an array `$newArray = $res -> fetch_array()`
+* `$mysqli -> free_result` ensures that all memory associated with the query and the result is freed to be used by other scripts
 
 
